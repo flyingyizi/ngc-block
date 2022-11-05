@@ -21,7 +21,8 @@ macro_rules! back_to_enum {
 }
 
 back_to_enum! {
-#[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd)]
+/// COMPLAY with `[reference\RS274NGC_3.pdf 3.5 G Codes]`
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd)]
 pub enum GCodes {
     ///G0--rapid positioning
     G0 = 0,
@@ -270,6 +271,8 @@ impl GCodes {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord)]
 
+
+/// COMPLAY with `[reference\RS274NGC_3.pdf 3.4 Modal Groups]`
 pub enum GGroup {
     /// {g4, g10, g28, g30, g53, g92 g92.1, g92.2, g92.3} - misc
     GCodeMisc = 0,
@@ -303,6 +306,7 @@ pub enum GGroup {
 }
 
 back_to_enum! {
+/// COMPLAY with `[reference\RS274NGC_3.pdf 3.6 Input M Codes]`
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MCodes {
     /// M0 program stop
@@ -371,6 +375,7 @@ impl MCodes {
 //     }
 // }
 
+/// COMPLAY with `[reference\RS274NGC_3.pdf 3.4 Modal Groups]`
 #[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub enum MGroup {
     /// {m0,m1,m2,m30,m60} - stopping

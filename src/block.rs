@@ -1,5 +1,10 @@
 use super::exp;
 
+use alloc::{
+    collections::BTreeMap,
+    string::String,
+    // vec::Vec
+};
 use exp::{
     // eval_exp_string, L0Val,
     eval_l0val,
@@ -8,11 +13,6 @@ use exp::{
     remove_ngc_comment,
     NgcWord,
     RefParsUtilTrait,
-};
-use alloc::{
-    collections::BTreeMap,
-    string::String,
-    // vec::Vec
 };
 
 use super::codes::{GCodes, GGroup, MCodes, MGroup};
@@ -23,7 +23,7 @@ use num_traits::Float;
 type GModalMap = BTreeMap<GGroup, GCodes>;
 type MModalMap = BTreeMap<MGroup, MCodes>;
 
-/* distance_mode */
+/// distance_mode, include absolute and incremental
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum DistanceMode {
     /// value is the destination value
@@ -32,7 +32,30 @@ pub enum DistanceMode {
     Incremental,
 }
 
-/// block represent store analyzed information from one statement line.
+/// it represent & store analyzed information from one statement line.
+///
+/// specification: `[reference\RS274NGC_3.pdf]`
+///
+/// # example
+/// ```text
+/// use ngc_block::{Block,GCodes,GGroup};
+/// let mut pars = TestSettings::new();
+/// pars.0.insert(5221, 2.0);
+/// pars.0.insert(5222, 3.0);
+/// // case 1
+/// let mut cmd = ("N110 G0 X#5221 Y#5222 (move above nominal hole center)").to_string();
+/// let mut block = Block::new();
+/// assert_eq!(block.read_items(&mut pars, &mut cmd), Ok(()));
+/// assert_eq!(
+///     block.get_comment(),
+///     Some("(move above nominal hole center)")
+/// );
+/// assert_eq!(Some(110), block.n_number);
+/// assert_eq!(Some(2.), block.x_number);
+/// assert_eq!(Some(3.), block.y_number);
+/// assert_eq!(block.g_modes.get(&GGroup::GCodeMotion), Some(&GCodes::G0));
+/// ```
+///
 #[derive(Debug)]
 pub struct Block {
     pub a_number: Option<f32>,
@@ -59,19 +82,16 @@ pub struct Block {
 
     comment: Option<String>,
 
-    // g_modes array in the block keeps track of which G modal groups are used on
-    // a line of code
+    /// g_modes array in the block keeps track of which G modal groups are used on
+    /// a line of code
     pub g_modes: GModalMap,
+    /// track of which M Modal groups
+    pub m_modes: MModalMap,
 
     pub motion_to_be: Option<GCodes>,
-
-    pub m_modes: MModalMap,
 }
 
 impl Block {
-    /* init_block
-     */
-
     pub fn new() -> Self {
         Self {
             a_number: None,
@@ -103,7 +123,34 @@ impl Block {
         }
     }
 
-    /// blocktext: downcased, white space gone
+    /// parse one statement to fullfill self's content. 
+    ///
+    /// notice: only when it reutrn Ok, the fields value is valid.
+    pub fn parse(
+        &mut self,
+        blocktext: &mut String,
+
+        pars: &mut impl RefParsUtilTrait,
+        last_saved_motion: &Option<GCodes>,
+        last_saved_distance_mode: &DistanceMode,
+    ) -> Result<(), BlockError> {
+        if blocktext.len() > 0 {
+            //parse line
+            if let Err(t) = self.read_items(pars, blocktext) {
+                return Err(t);
+            }
+            if let Err(t) = self.enhance_block(last_saved_motion) {
+                return Err(t);
+            }
+            if let Err(t) = self.check_items(last_saved_distance_mode) {
+                return Err(t);
+            }
+            return Ok(());
+        }
+        Err(BlockError::NceSscanfFailed)
+    }
+
+    /// read one(only one) statement line, parsed result stored in self
     pub fn read_items(
         &mut self,
         pars: &mut impl RefParsUtilTrait,
@@ -260,6 +307,7 @@ impl Block {
         return Ok(());
     }
 
+
     pub fn get_comment(&self) -> Option<&str> {
         if let Some(s) = &self.comment {
             return Some(s.as_str());
@@ -267,8 +315,7 @@ impl Block {
 
         return None;
     }
-    /// If any of the following errors occur, this returns the error shown.
-    /// Otherwise, it returns RS274NGC_OK.
+    /// do basic checks and assign motion_to_be field, include:
     /// 1. A g80 is in the block, no modal group 0 code that uses axes
     ///    is in the block, and one or more axis values is given:
     ///    NceCannotUseAxisValuesWithG80
@@ -283,12 +330,10 @@ impl Block {
     ///    nor an active previously given modal g-code that uses axis values:
     ///    NCE_CANNOT_USE_AXIS_VALUES_WITHOUT_A_G_CODE_THAT_USES_THEM
     ///
-    ///  enhance_block
     ///  If there is a g-code for motion in the block (in g_modes\[GCodeMotion\]),
     ///  set motion_to_be to that. Otherwise, if there is an axis value in the
     ///  block and no g-code to use it (any such would be from group 0 in
-    ///  g_modes\[GCodeMisc\]), set motion_to_be to be the last motion saved (in
-    ///  settings->motion mode).
+    ///  g_modes\[GCodeMisc\]), should set motion_to_be as the last motion saved(input motion_mode).
     ///
     pub fn enhance_block(&mut self, motion_mode: &Option<GCodes>) -> Result<(), BlockError> {
         /* pointer to machine settings       */
