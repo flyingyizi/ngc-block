@@ -1,4 +1,6 @@
-// tell rustc only compile no-std when disable test feature
+//! COMPLAY with [reference\RS274NGC_3.pdf], include statement line parsing, and ngc paramenters visiting.
+//! line parsing result is [Block]
+
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(test, feature(test))]
 
@@ -14,7 +16,7 @@ pub use {
     block::{Block, DistanceMode},
     exp::RefParsUtilTrait,
     codes::{GCodes, GGroup, MCodes, MGroup},
-    params::{FieldIndex, Parameter, Paramters, Position},
+    params::{FieldIndex, Argument, Paramters, Position},
 };
 
 // pub fn add(left: usize, right: usize) -> usize {
