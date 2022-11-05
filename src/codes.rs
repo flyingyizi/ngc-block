@@ -271,7 +271,6 @@ impl GCodes {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord)]
 
-
 /// COMPLAY with `[reference\RS274NGC_3.pdf 3.4 Modal Groups]`
 pub enum GGroup {
     /// {g4, g10, g28, g30, g53, g92 g92.1, g92.2, g92.3} - misc

@@ -23,8 +23,76 @@ impl Position {
     }
 }
 
+impl core::ops::Sub for Position {
+    type Output = Self;
+    #[inline]
+    fn sub(self, rhs: Self::Output) -> Self {
+        Position::new(
+            self.x - rhs.x,
+            self.y - rhs.y,
+            self.z - rhs.z,
+            self.aa - rhs.aa,
+            self.bb - rhs.bb,
+            self.cc - rhs.cc,
+        )
+    }
+}
+
+impl core::ops::Add for Position {
+    type Output = Self;
+    #[inline]
+    fn add(self, rhs: Self::Output) -> Self {
+        Position::new(
+            self.x + rhs.x,
+            self.y + rhs.y,
+            self.z + rhs.z,
+            self.aa + rhs.aa,
+            self.bb + rhs.bb,
+            self.cc + rhs.cc,
+        )
+    }
+}
+
+impl core::ops::MulAssign<f32> for Position {
+    #[inline]
+    fn mul_assign(&mut self, rhs: f32) {
+        self.x *= rhs;
+        self.y *= rhs;
+        self.z *= rhs;
+        self.aa *= rhs;
+        self.bb *= rhs;
+        self.cc *= rhs;
+    }
+}
+
+impl core::ops::Div<f32> for Position {
+    type Output = Self;
+    fn div(self, rhs: f32) -> Self::Output {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+            aa: self.aa / rhs,
+            bb: self.bb / rhs,
+            cc: self.cc / rhs,
+        }
+    }
+}
+
+impl core::default::Default for Position {
+    fn default() -> Self {
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            aa: 0.0,
+            bb: 0.0,
+            cc: 0.0,
+        }
+    }
+}
 /// helper enum, used to simplify setting/getting [Paramenters]
-/// 
+///
 /// example
 /// ```text
 /// let mut store: Paramters = Paramters::new();
@@ -659,7 +727,7 @@ impl FieldIndex {
 
 #[cfg(test)]
 mod tests {
-    use super::{FieldIndex, Argument, Paramters, Position};
+    use super::{Argument, FieldIndex, Paramters, Position};
 
     #[test]
     fn stack_new() {

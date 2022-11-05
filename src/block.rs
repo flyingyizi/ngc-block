@@ -123,7 +123,7 @@ impl Block {
         }
     }
 
-    /// parse one statement to fullfill self's content. 
+    /// parse one statement to fullfill self's content.
     ///
     /// notice: only when it reutrn Ok, the fields value is valid.
     pub fn parse(
@@ -306,7 +306,6 @@ impl Block {
 
         return Ok(());
     }
-
 
     pub fn get_comment(&self) -> Option<&str> {
         if let Some(s) = &self.comment {

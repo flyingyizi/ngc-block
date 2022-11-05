@@ -7,16 +7,17 @@
 extern crate alloc;
 
 mod block;
-mod exp;
 mod codes;
 mod error;
+mod exp;
 mod params;
 
 pub use {
     block::{Block, DistanceMode},
-    exp::RefParsUtilTrait,
     codes::{GCodes, GGroup, MCodes, MGroup},
-    params::{FieldIndex, Argument, Paramters, Position},
+    error::BlockError,
+    exp::RefParsUtilTrait,
+    params::{Argument, FieldIndex, Paramters, Position},
 };
 
 // pub fn add(left: usize, right: usize) -> usize {
