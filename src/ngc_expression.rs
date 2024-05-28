@@ -52,32 +52,6 @@ impl Op {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Expr {
-    RealNumber(f32),
-    ParameterValue(Box<Expr>),
-    UnaryOp(Unary),
-    UnaryArcTangentOp(UnaryArcTangent),
-    // UnaryMinus(Box<Expr>),
-    BinOp {
-        lhs: Box<Expr>,
-        op: Op,
-        rhs: Box<Expr>,
-    },
-}
-impl Expr {
-    #[cfg(any(feature = "std", test))]
-    pub fn dis(&self) -> String {
-        match &self {
-            &Self::RealNumber(x) => format!("({})", x),
-            &Self::ParameterValue(x) => format!("(#{})", x.dis()),
-            &Self::UnaryOp(x) => format!("({})", x.dis()),
-            &Self::UnaryArcTangentOp(x) => format!("({})", x.dis()),
-            &Self::BinOp { lhs, op, rhs } => format!("({}{}{})", lhs.dis(), op.dis(), rhs.dis()),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
 pub enum Unary {
     Abs(Box<Expr>),
     Acos(Box<Expr>),
@@ -129,6 +103,32 @@ impl UnaryArcTangent {
             _ => {
                 unreachable!()
             }
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Expr {
+    RealNumber(f32),
+    ParameterValue(Box<Expr>),
+    UnaryOp(Unary),
+    UnaryArcTangentOp(UnaryArcTangent),
+    // UnaryMinus(Box<Expr>),
+    BinOp {
+        lhs: Box<Expr>,
+        op: Op,
+        rhs: Box<Expr>,
+    },
+}
+impl Expr {
+    #[cfg(any(feature = "std", test))]
+    pub fn dis(&self) -> String {
+        match &self {
+            &Self::RealNumber(x) => format!("({})", x),
+            &Self::ParameterValue(x) => format!("(#{})", x.dis()),
+            &Self::UnaryOp(x) => format!("({})", x.dis()),
+            &Self::UnaryArcTangentOp(x) => format!("({})", x.dis()),
+            &Self::BinOp { lhs, op, rhs } => format!("({}{}{})", lhs.dis(), op.dis(), rhs.dis()),
         }
     }
 }
@@ -199,6 +199,139 @@ pub fn parse_expr(pairs: Pairs<Rule>) -> Expr {
         //     _ => unreachable!(),
         // })
         .parse(pairs)
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ParameterSet {
+    par_index: Box<Expr>,
+    val: Box<Expr>,
+}
+
+#[derive(Debug)]
+pub struct Block {
+    pub a_number: Option<f32>,
+    pub b_number: Option<f32>,
+    pub c_number: Option<f32>,
+    pub d_number: Option<i32>,
+    pub f_number: Option<f32>,
+    pub h_number: Option<i32>,
+
+    pub i_number: Option<f32>,
+    pub j_number: Option<f32>,
+    pub k_number: Option<f32>,
+
+    pub l_number: Option<i32>,
+    pub n_number: Option<u32>,
+    pub p_number: Option<f32>,
+    q_number: Option<f32>,
+    pub r_number: Option<f32>,
+    pub s_number: Option<f32>,
+    pub t_number: Option<i32>,
+    pub x_number: Option<f32>,
+    pub y_number: Option<f32>,
+    pub z_number: Option<f32>,
+
+    comment: Option<String>,
+    // /// g_modes array in the block keeps track of which G modal groups are used on
+    // /// a line of code
+    // pub g_modes: GModalMap,
+    // /// track of which M Modal groups
+    // pub m_modes: MModalMap,
+
+    // pub motion_to_be: Option<GCodes>,
+}
+
+impl Block {
+    pub fn new() -> Self {
+        Self {
+            a_number: None,
+            b_number: None,
+            c_number: None,
+            d_number: None,
+            f_number: None,
+            h_number: None,
+            i_number: None,
+            j_number: None,
+            k_number: None,
+            l_number: None,
+            n_number: None,
+            p_number: None,
+            q_number: None,
+            r_number: None,
+            s_number: None,
+            t_number: None,
+            x_number: None,
+            y_number: None,
+            z_number: None,
+
+            comment: None,
+            // motion_to_be: None,
+
+            // g_modes: GModalMap::new(),
+            // m_modes: MModalMap::new(),
+        }
+    }
+}
+
+pub fn parse_line(str: &str) -> Option<Block> {
+    let o = Rs274ngcParser::parse(Rule::line, str)
+        .expect("unsuccessful parse")
+        .next()
+        .unwrap();
+
+    let mut block = Block::new();
+    for field in o.into_inner() {
+        match field.as_rule() {
+            Rule::block_delete => return None,
+            Rule::line_number => {
+                let mut inner_rules = field.into_inner(); // { "n" ~ ASCII_DIGIT{1,5} }
+                let value: &str = inner_rules.next().unwrap().as_str();
+                block.n_number.replace(value.parse::<u32>().unwrap());
+            }
+            Rule::segment => {
+                let mut inner_rules = field.into_inner(); // { mid_line_word | comment | parameter_setting }
+                let v = inner_rules.next().unwrap();
+
+                match v.as_rule() {
+                    Rule::mid_line_word => {
+                        let mut inner_rules = v.into_inner(); // { mid_line_letter ~ real_value }
+                        let mid_l_l = inner_rules.next().unwrap();
+                        let real_val = inner_rules.next().unwrap();
+
+                        match mid_l_l.as_rule() {
+                            Rule::letter_a => {}
+                            Rule::letter_b => {}
+                            Rule::letter_c => {}
+                            Rule::letter_d => {}
+                            Rule::letter_f => {}
+                            Rule::letter_g => {}
+                            Rule::letter_h => {}
+                            Rule::letter_i => {}
+                            Rule::letter_j => {}
+                            Rule::letter_k => {}
+                            Rule::letter_l => {}
+                            Rule::letter_m => {}
+                            Rule::letter_p => {}
+                            Rule::letter_q => {}
+                            Rule::letter_r => {}
+                            Rule::letter_s => {}
+                            Rule::letter_t => {}
+                            Rule::letter_x => {}
+                            Rule::letter_y => {}
+                            Rule::letter_z => {}
+                            _ => unreachable!(),
+                        }
+                    }
+                    Rule::comment => {}
+                    Rule::parameter_setting => {}
+                    _ => unreachable!(),
+                }
+            }
+            _ => {}
+        }
+    }
+
+    None
 }
 
 #[test]

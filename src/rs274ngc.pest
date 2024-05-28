@@ -39,7 +39,8 @@ message = { "(" ~ white_space* ~ ^"m" ~ white_space* ~ ^"s" ~  white_space* ~ ^"
 
 ///mid_line_letter = letter_a | letter_b | letter_c| letter_d | letter_f | letter_g | letter_h | letter_i| letter_j | letter_k | letter_l | letter_m | letter_p | letter_q | letter_r | letter_s | letter_t| letter_x | letter_y | letter_z .
 /// case insensitive
-mid_line_letter = { ^"a" | ^"b" | ^"c" | ^"d" | ^"f" | ^"g" | ^"h" | ^"i" | ^"j" | ^"k" | ^"l" | ^"m" | ^"p" | ^"q" | ^"r" | ^"s" | ^"t" | ^"x" | ^"y" | ^"z"}
+mid_line_letter = {letter_a | letter_b | letter_c| letter_d | letter_f | letter_g | letter_h | letter_i| letter_j | letter_k | letter_l | letter_m | letter_p | letter_q | letter_r | letter_s | letter_t| letter_x | letter_y | letter_z}
+//mid_line_letter = { ^"a" | ^"b" | ^"c" | ^"d" | ^"f" | ^"g" | ^"h" | ^"i" | ^"j" | ^"k" | ^"l" | ^"m" | ^"p" | ^"q" | ^"r" | ^"s" | ^"t" | ^"x" | ^"y" | ^"z"}
 ///real_value = real_number | expression | parameter_value | unary_combo .
 real_value = _{ real_number | expression | parameter_value | unary_combo }
 /// white_space = space | tab .
@@ -100,3 +101,25 @@ parameter_sign = {"#"}
 binary_operation1 = _{power}
 binary_operation2 = _{ divided_by | modulo | times }
 binary_operation3 = _{and | exclusive_or | minus | non_exclusive_or | plus }
+
+///mid_line_letter = 
+letter_a  = { ^"a"} 
+letter_b  = { ^"b"} 
+letter_c  = { ^"c"} 
+letter_d  = { ^"d"} 
+letter_f  = { ^"f"} 
+letter_g  = { ^"g"} 
+letter_h  = { ^"h"} 
+letter_i  = { ^"i"} 
+letter_j  = { ^"j"} 
+letter_k  = { ^"k"} 
+letter_l  = { ^"l"} 
+letter_m  = { ^"m"} 
+letter_p  = { ^"p"} 
+letter_q  = { ^"q"} 
+letter_r  = { ^"r"} 
+letter_s  = { ^"s"} 
+letter_t  = { ^"t"} 
+letter_x  = { ^"x"} 
+letter_y  = { ^"y"} 
+letter_z  = { ^"z"}
