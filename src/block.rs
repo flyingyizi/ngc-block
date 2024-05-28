@@ -1,12 +1,9 @@
 use super::exp;
 
-use alloc::{
-    collections::BTreeMap,
-    string::String,
+use crate::{BTreeMap,String,
     // vec::Vec
 };
 use exp::{
-    // eval_exp_string, L0Val,
     eval_l0val,
     helper_par_assign,
     parse_to_l0vals,
@@ -573,6 +570,7 @@ impl Block {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ToString;
 
     struct TestSettings(BTreeMap<i32, f32>);
     impl TestSettings {

@@ -4,7 +4,7 @@ pub use ngc::{
     helper_par_assign, remove_ngc_comment, RefParsUtilTrait,
 };
 mod ngc {
-    use alloc::string::String;
+    use crate::String;
 
     use elements::L0Val;
 
@@ -100,10 +100,8 @@ mod ngc {
     /// use \[parse_to_l0vals\] deal the remainder str .
     pub mod elements {
         use super::NgcErr;
-        use alloc::{
-            string::{String, ToString},
-            vec::Vec,
-        };
+
+        use crate::{String, ToString,Vec};
 
         use nom::Err;
         use nom::{
@@ -296,11 +294,7 @@ mod ngc {
             elements::{bracket_part, real_value, L0Val},
             RefParsUtilTrait,
         };
-        use alloc::{
-            // boxed::Box,
-            string::{String, ToString},
-            vec::Vec,
-        };
+        use crate::{String, ToString,Vec};
         use nom::{
             branch::alt,
             bytes::complete::{tag, tag_no_case},
@@ -851,9 +845,9 @@ mod ngc {
 
                 assert_eq!(eval_exp_string("fup[-0.499]", &pars), Some(0.0));
                 assert_eq!(eval_exp_string("fup[-0.5001]", &pars), Some(0.0));
-                assert_eq!(eval_exp_string("fup[2.444]", &pars), Some(3.0));
-                assert_eq!(eval_exp_string("fup[9.975]", &pars), Some(10.0));
-                assert_eq!(eval_exp_string("fIX[-0.499]", &pars), Some(-1.0));
+                assert_eq!(eval_exp_string("fup[2.444]",   &pars), Some(3.0));
+                assert_eq!(eval_exp_string("fup[9.975]",   &pars), Some(10.0));
+                assert_eq!(eval_exp_string("fIX[-0.499]",  &pars), Some(-1.0));
                 assert_eq!(eval_exp_string("fIX[-0.5001]", &pars), Some(-1.0));
                 assert_eq!(eval_exp_string("fIX[2.444]", &pars), Some(2.0));
                 assert_eq!(eval_exp_string("fIX[9.975]", &pars), Some(9.0));
@@ -882,6 +876,7 @@ mod ngc {
             elements::{parse_to_l0vals, L0Val, NgcWord},
             remove_ngc_comment,
         };
+        use crate::ToString;
 
         #[test]
         fn test_remove() {

@@ -181,7 +181,7 @@ pub enum ParaIndex {
     CoordSys9 = 5381,        //coord. system 9
 }
 
-use alloc::collections::BTreeMap;
+use crate::BTreeMap;
 type TParamtersMap = BTreeMap<ParaIndex, Argument>;
 
 /// COMPLAY with `[reference\RS274NGC_3.pdf 3.2.1 Parameters]`
