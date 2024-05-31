@@ -6,7 +6,6 @@
 
 #![no_std]
 
-
 #[cfg(all(feature = "std", feature = "no_std"))] 
 compile_error!("alterative std or no_std, not select at the same time");
 cfg_if::cfg_if! {

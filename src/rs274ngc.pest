@@ -21,7 +21,8 @@ line ={ block_delete? ~  line_number?  ~ segment* ~ end_of_line}
 ///block_delete = ‘/’
 block_delete = {"/"}
 ///line_number = letter_n + digit + [digit] + [digit] + [digit] + [digit] .
-line_number = {"n" ~ ASCII_DIGIT{1,5} }
+line_number = {"n" ~ number_for_line }
+number_for_line = { ASCII_DIGIT{1,5} }
 ///segment = mid_line_word | comment | parameter_setting .
 segment = { mid_line_word | comment | parameter_setting }
 /// end_of_line = ‘ ‘ (non-printable newline character)
@@ -31,7 +32,7 @@ end_of_line = _{("\r\n" | "\n")*}
 /// mid_line_word = mid_line_letter + real_value .
 mid_line_word = {mid_line_letter ~ real_value}
 /// parameter_setting = parameter_sign + parameter_index + equal_sign + real_value .
-parameter_setting = { parameter_sign ~ parameter_index ~ "=" ~ real_value }
+parameter_setting = { "#" ~ parameter_index ~ "=" ~ real_value }
 /// comment = message | ordinary_comment .
 comment = ${ message | ordinary_comment }
 ///message = left_parenthesis + {white_space} + letter_m + {white_space} + letter_s + {white_space} + letter_g + {white_space} + comma + {comment_character} + "right_parenthesis" .
@@ -42,7 +43,7 @@ message = { "(" ~ white_space* ~ ^"m" ~ white_space* ~ ^"s" ~  white_space* ~ ^"
 mid_line_letter = {letter_a | letter_b | letter_c| letter_d | letter_f | letter_g | letter_h | letter_i| letter_j | letter_k | letter_l | letter_m | letter_p | letter_q | letter_r | letter_s | letter_t| letter_x | letter_y | letter_z}
 //mid_line_letter = { ^"a" | ^"b" | ^"c" | ^"d" | ^"f" | ^"g" | ^"h" | ^"i" | ^"j" | ^"k" | ^"l" | ^"m" | ^"p" | ^"q" | ^"r" | ^"s" | ^"t" | ^"x" | ^"y" | ^"z"}
 ///real_value = real_number | expression | parameter_value | unary_combo .
-real_value = _{ real_number | expression | parameter_value | unary_combo }
+real_value = { real_number | expression | parameter_value | unary_combo }
 /// white_space = space | tab .
 white_space={" " | "\t"}
 
