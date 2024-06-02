@@ -6,15 +6,19 @@
 
 #![no_std]
 
-#[cfg(all(feature = "std", feature = "no_std"))] 
+#[cfg(all(feature = "std", feature = "no_std"))]
 compile_error!("alterative std or no_std, not select at the same time");
 cfg_if::cfg_if! {
     if #[cfg(all(feature = "std",not(feature = "no_std")))] {
         use std::{fmt,format,string::{String,ToString},vec,vec::Vec,collections::BTreeMap,boxed::Box};
+        use thiserror::Error;
+
     }
     else if #[cfg(all(feature = "no_std",not(feature = "std")))] {
         extern crate alloc;
         use alloc::{fmt,format,string::{String,ToString},vec,vec::Vec,collections::BTreeMap,boxed::Box};
+        use thiserror_no_std::Error;
+
     }
 }
 
@@ -23,32 +27,11 @@ cfg_if::cfg_if! {
 #[macro_use]
 extern crate std;
 
-
-mod block;
 mod codes;
-mod error;
-mod exp;
+mod rs274ngc;
 mod params;
-mod ngc_expression;
 pub use {
-    block::{Block, DistanceMode},
     codes::{GCodes, GGroup, MCodes, MGroup},
-    error::BlockError,
-    exp::RefParsUtilTrait,
     params::{Argument, FieldIndex, Paramters, Position},
+    rs274ngc::{parse_lines,Block,DistanceMode},
 };
-
-// pub fn add(left: usize, right: usize) -> usize {
-//     left + right
-// }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn it_works() {
-//         let result = add(2, 2);
-//         assert_eq!(result, 4);
-//     }
-// }

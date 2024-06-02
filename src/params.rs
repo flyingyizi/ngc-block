@@ -1,4 +1,11 @@
-use super::exp::RefParsUtilTrait;
+/// util to write/read ngc paramenters. the paramenter key use defined key
+/// in `[reference\RS274NGC_3.pdf 3.2.1 Parameters]`. e.g. 5161 is "G28 home X"
+pub trait RefParsUtilTrait {
+    /// get paramenter by key
+    fn get_params(&self, key: i32) -> Option<f32>;
+    /// set paramenter by key
+    fn set_params(&mut self, _key: i32, _val: f32) {}
+}
 
 // use num_traits::Float;
 #[derive(Clone, Copy, Debug, PartialEq /* , Eq, */)]

@@ -8,13 +8,23 @@ edition = "2021"
 [dependencies]
 cfg-if = "1.0.0"
 lazy_static = { version = "1.4.0" ,optional = true}
-nom = { version = "7.1.1", default-features = false ,optional = true}
 num-traits = {version = "0.2.15",default-features = false,features = ["libm"]}
 
 pest = { version = "2.7", default-features = false }
 pest_derive = { version = "2.7", default-features = false }
+thiserror = { version = "1.0.20", optional = true }
+thiserror-no-std = { version = "2.0.2", optional = true }
+
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "parse_gcode"
+harness = false
+
 
 [features]
-std = ["nom/std","pest/std","pest_derive/std","lazy_static"]
-no_std = ["nom/alloc", "lazy_static/spin_no_std"]
+std = ["thiserror","pest/std","pest_derive/std","lazy_static"]
+no_std = ["lazy_static/spin_no_std","thiserror-no-std"]
 default = ["std"]
